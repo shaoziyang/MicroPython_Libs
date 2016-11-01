@@ -19,7 +19,7 @@ usage
 =====
 
 from HTS221 import HTS221
-ht = HTS221(1)
+ht = HTS221(i2c)
 ht.get()
 
 other function

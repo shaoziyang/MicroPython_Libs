@@ -10,7 +10,7 @@ DATA:     2016.6
 #usage:
 
 from HTS221 import HTS221
-ht = HTS221(1)
+ht = HTS221(i2c)
 ht.get()
 
 #other function
@@ -20,7 +20,7 @@ ht.poweroff()
 ht.poweron()
 """
 
-from pyb import I2C
+from hal import hal_i2c
 
 # HTS221 I2C address
 HTS_I2C_ADDR = const(0x5F)
@@ -52,83 +52,77 @@ HTS221_T1_OUT_H     = const(0x3F)
 
 class HTS221(object):
     def __init__(self, i2c):
-        self.i2c = I2C(i2c, I2C.MASTER, baudrate = 100000)
+        self.i2c = hal_i2c(i2c)
+        self.ADDR = HTS_I2C_ADDR
         # HTS221 Temp Calibration registers
-        self.T0_OUT = self.get2Reg(HTS221_T0_OUT_L)
-        self.T1_OUT = self.get2Reg(HTS221_T1_OUT_L)
+        self.T0_OUT = self.gr2(HTS221_T0_OUT_L)
+        self.T1_OUT = self.gr2(HTS221_T1_OUT_L)
         if self.T0_OUT>=0x8000 :
             self.T0_OUT -= 65536
         if self.T1_OUT>=0x8000 :
             self.T1_OUT -= 65536
-        t1 = self.getReg(HTS221_T1T0_msb) 
-        self.T0_degC = (self.getReg(HTS221_T0_degC_x8) + (t1%4)*256)/8
-        self.T1_degC = (self.getReg(HTS221_T1_degC_x8)+ ((t1%16)/4)*256)/8
+        t1 = self.gr(HTS221_T1T0_msb) 
+        self.T0_degC = (self.gr(HTS221_T0_degC_x8) + (t1%4)*256)/8
+        self.T1_degC = (self.gr(HTS221_T1_degC_x8) + ((t1%16)/4)*256)/8
         # HTS221 Humi Calibration registers
-        self.H0_OUT = self.get2Reg(HTS221_H0_T0_OUT_L)
-        self.H1_OUT = self.get2Reg(HTS221_H1_T0_OUT_L)
-        self.H0_rH = self.getReg(HTS221_H0_rH_x2)/2
-        self.H1_rH = self.getReg(HTS221_H1_rH_x2)/2
+        self.H0_OUT = self.gr2(HTS221_H0_T0_OUT_L)
+        self.H1_OUT = self.gr2(HTS221_H1_T0_OUT_L)
+        self.H0_rH = self.gr(HTS221_H0_rH_x2)/2
+        self.H1_rH = self.gr(HTS221_H1_rH_x2)/2
         # set av conf: T=4 H=8
-        self.setReg(0x81, HTS221_AV_CONF)
+        self.sr(0x81, HTS221_AV_CONF)
         # set CTRL_REG1: PD=1 BDU=1 ODR=1
-        self.setReg(0x85, HTS221_CTRL_REG1)
+        self.sr(0x85, HTS221_CTRL_REG1)
     
-    def setReg(self, dat, reg):
-        buf = bytearray(2)
-        buf[0] = reg
-        buf[1] = dat
-        self.i2c.send(buf, HTS_I2C_ADDR)
-        
-    def getReg(self, reg):
-        self.i2c.send(reg, HTS_I2C_ADDR)
-        t = self.i2c.recv(1, HTS_I2C_ADDR)
-        return t[0]
-    
-    def get2Reg(self, reg):
-        a = self.getReg(reg)
-        b = self.getReg(reg + 1)
-        return a + b * 256
+    def sr(self, reg, dat):
+        self.i2c.setReg(self.ADDR, reg, dat)
+
+    def gr(self, reg):
+        return self.i2c.getReg(self.ADDR, reg)
+
+    def gr2(self, reg):
+        return self.i2c.get2Reg(self.ADDR, reg)
 
     # Device identification
     def WhoAmI(self):
-        return self.getReg(HTS221_WHO_AM_I)
+        return self.gr(HTS221_WHO_AM_I)
         
     # get STATUS regster
     def STATUS(self):
-        return self.getReg(HTS221_STATUS_REG)
+        return self.gr(HTS221_STATUS_REG)
         
     # power control
     def poweroff(self):
-        t = self.getReg(HTS221_CTRL_REG1) & 0x7F
-        self.setReg(t, HTS221_CTRL_REG1)
+        t = self.gr(HTS221_CTRL_REG1) & 0x7F
+        self.sr(t, HTS221_CTRL_REG1)
 
     def poweron(self):
-        t = self.getReg(HTS221_CTRL_REG1) | 0x80
-        self.setReg(t, HTS221_CTRL_REG1)
+        t = self.gr(HTS221_CTRL_REG1) | 0x80
+        self.sr(t, HTS221_CTRL_REG1)
 
     # get/set Output data rate
     def ODR(self, ord=''):
         if ord != '':
-            t = self.getReg(HTS221_CTRL_REG1) & 0xFC
-            self.setReg(t | ord, HTS221_CTRL_REG1)
+            t = self.gr(HTS221_CTRL_REG1) & 0xFC
+            self.sr(t | ord, HTS221_CTRL_REG1)
         else:
-            return self.getReg(HTS221_CTRL_REG1) & 0x03
+            return self.gr(HTS221_CTRL_REG1) & 0x03
         
     # get/set Humidity and temperature average configuratio
     def av(self, av=''):
         if av != '':
-            self.setReg(av, HTS221_AV_CONF)
+            self.sr(av, HTS221_AV_CONF)
         else:
-            return self.getReg(HTS221_AV_CONF)
+            return self.gr(HTS221_AV_CONF)
 
     # calculate Temperature
     def getTemp(self):
-        t = self.get2Reg(HTS221_TEMP_OUT_L)
+        t = self.gr2(HTS221_TEMP_OUT_L)
         return self.T0_degC + (self.T1_degC - self.T0_degC) * (t - self.T0_OUT) / (self.T1_OUT - self.T0_OUT)
 
     # calculate Humidity
     def getHumi(self):
-        t = self.get2Reg(HTS221_HUMIDITY_OUT_L)
+        t = self.gr2(HTS221_HUMIDITY_OUT_L)
         return self.H0_rH + (self.H1_rH - self.H0_rH) * (t - self.H0_OUT) / (self.H1_OUT - self.H0_OUT)
         
     # get Humidity and Temperature

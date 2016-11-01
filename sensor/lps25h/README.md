@@ -5,19 +5,38 @@ The LPS25H is an ultra compact absolute piezoresistive pressure sensor. It inclu
 http://www.st.com/content/st_com/en/products/mems-and-sensors/pressure-sensors/lps25h.html?icmp=pf255230_pron_pr_feb2014
 
 
-Device I2C address
+Basic I2C address:
+0x5C
 
-0x5D (SA0 = 1)
 
+Usage:
 
-usage
-=====
+for pyb:
+
+from pyb import I2C
+i2c = I2C(1, I2C.MASTER)
 
 from LPS25H import LPS25H
-lps25=LPS25H(1)
-
-lps25=LPS25H(1, 1)
+lps25=LPS25H(i2c)
 
 lps25.TEMP()
 lps25.PRESS()
+
+
+for esp8266:
+
+from machine import Pin, I2C
+i2c = I2C(Pin(14), Pin(2))
+
+from LPS25H import LPS25H
+lps25=LPS25H(i2c)
+
+lps25.TEMP()
+lps25.PRESS()
+
+
+set I2C address SA0
+
+# SA0 = 0
+lps25=LPS25H(i2c, 0)
 
