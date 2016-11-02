@@ -9,7 +9,7 @@ Library will be continuous renewal.
 
 
 #Usage:
-------
+
 for pyb:
 
     from pyb import I2C
