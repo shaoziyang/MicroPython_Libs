@@ -8,8 +8,8 @@ Library will be continuous renewal.
 
 
 
-#Usage:
-
+Usage:
+------
 for pyb:
 
     from pyb import I2C
