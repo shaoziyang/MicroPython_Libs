@@ -10,8 +10,10 @@ Library will be continuous renewal.
 
 #Usage:
 
-- for pyb
-123  
+- for pyb:
+
+
+    $ git submodule update --init
 
     from pyb import I2C
     i2c = I2C(1, I2C.MASTER)
@@ -24,7 +26,9 @@ Library will be continuous renewal.
 
 
 - for esp8266:
-123  
+
+
+    $ git submodule update --init
 
     from machine import Pin, I2C
     i2c = I2C(Pin(14), Pin(2))
