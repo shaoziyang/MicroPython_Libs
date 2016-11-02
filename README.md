@@ -9,11 +9,8 @@ Library will be continuous renewal.
 
 
 #Usage:
-
-- for pyb:
-
-
-    $ git submodule update --init
+------
+for pyb:
 
     from pyb import I2C
     i2c = I2C(1, I2C.MASTER)
@@ -25,10 +22,7 @@ Library will be continuous renewal.
     lps25.PRESS()
 
 
-- for esp8266:
-
-
-    $ git submodule update --init
+for esp8266:
 
     from machine import Pin, I2C
     i2c = I2C(Pin(14), Pin(2))
