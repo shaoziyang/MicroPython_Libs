@@ -10,25 +10,25 @@ Library will be continuous renewal.
 
 #Usage:
 
-for pyb
+- for pyb
 
-from pyb import I2C
-i2c = I2C(1, I2C.MASTER)
+    from pyb import I2C
+    i2c = I2C(1, I2C.MASTER)
 
-from LPS25H import LPS25H
-lps25=LPS25H(i2c)
+    from LPS25H import LPS25H
+    lps25=LPS25H(i2c)
 
-lps25.TEMP()
-lps25.PRESS()
+    lps25.TEMP()
+    lps25.PRESS()
 
 
-for esp8266:
+- for esp8266:
 
-from machine import Pin, I2C
-i2c = I2C(Pin(14), Pin(2))
+    from machine import Pin, I2C
+    i2c = I2C(Pin(14), Pin(2))
 
-from LPS25H import LPS25H
-lps25=LPS25H(i2c)
+    from LPS25H import LPS25H
+    lps25=LPS25H(i2c)
 
-lps25.TEMP()
-lps25.PRESS()
+    lps25.TEMP()
+    lps25.PRESS()
