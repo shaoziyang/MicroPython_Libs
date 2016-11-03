@@ -12,12 +12,16 @@ http://www.st.com/content/st_com/en/products/mems-and-sensors/humidity-sensors/h
 
 Default device I2C address: 0x5F
 
------
+-
 
 Author:  shaoziyang
+
 version: 2.0
+
 Date:    2016 Nov
+
 web:     http://www.micropython.org.cn/
+
 github:  https://github.com/shaoziyang/MicroPython_Libs
 
 License: MIT
