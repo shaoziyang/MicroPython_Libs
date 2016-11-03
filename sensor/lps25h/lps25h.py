@@ -19,6 +19,9 @@ lps25.PRESS()
 
 from hal import hal_i2c
 
+DRV_VER   = 2.0
+DRV_BUILD = 1010
+
 # device I2C addr
 LPS25H_ADDR        = const(0x5C)
 
@@ -51,6 +54,8 @@ class LPS25H(object):
     def __init__(self, i2c, SA0 = 1):
         self.i2c = hal_i2c(i2c)
         self.ADDR = LPS25H_ADDR | SA0
+        self.version = DRV_VER
+        self.build = DRV_BUILD
         # power on
         self.sr(LPS25H_CTRL_REG1, 0x90)
 
