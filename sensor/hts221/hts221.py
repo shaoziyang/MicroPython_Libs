@@ -18,6 +18,7 @@ ht.get()
 """
 
 from hal import hal_i2c
+from micropython import const
 
 DRV_VER   = 2.0
 DRV_BUILD = 1010

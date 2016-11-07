@@ -2,7 +2,7 @@
 
 Micropython libraries for a wide variety of modules, components, sensors.
 
-Main purpose is let drive compatible with the esp8266 and pyb architectures, make it easy to use.
+Main purpose is let drive compatible with the esp8266, pyb amd other architectures, make it easy to use.
 
 Library will be continuous renewal.
 

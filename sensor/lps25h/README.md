@@ -8,7 +8,7 @@ http://www.st.com/content/st_com/en/products/mems-and-sensors/pressure-sensors/l
 
 default I2C address: 0x5C
 
--
+---
 
 Author:  shaoziyang
 
